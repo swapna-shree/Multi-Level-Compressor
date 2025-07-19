@@ -74,30 +74,30 @@ Compressed Binary → Huffman Decode → RLE Decode → MTF Decode → BWT Decod
 
 ```
 Huffman/
-├── algorithms/                    # C++ compression algorithms and tools
-│   ├── Compressor.cpp            # Main compression pipeline class
-│   ├── compressor_cli.cpp        # CLI compression executable
-│   ├── decompressor_cli.cpp      # CLI decompression executable
-│   ├── BWT.cpp/BWT.h            # Burrows-Wheeler Transform
-│   ├── MTF.cpp/MTF.h            # Move-To-Front encoding
-│   ├── RLE.cpp/RLE.h            # Run-Length Encoding
-│   ├── Huffman.cpp/Huffman.h    # Huffman coding
-│   ├── test_*.cpp               # Algorithm test files
-│   ├── *.exe                    # Compiled executables
-│   └── text_input.txt           # Sample input file
-├── backend/                      # Node.js API server
-│   ├── server.js                # Express API server
-│   ├── compressor_cli.exe       # Compiled compression executable
-│   └── package.json             # Backend dependencies
-├── frontend/                     # React web application
+├── algorithms/                    
+│   ├── Compressor.cpp            
+│   ├── compressor_cli.cpp        
+│   ├── decompressor_cli.cpp      
+│   ├── BWT.cpp/BWT.h            
+│   ├── MTF.cpp/MTF.h            
+│   ├── RLE.cpp/RLE.h            
+│   ├── Huffman.cpp/Huffman.h    
+│   ├── test_*.cpp               
+│   ├── *.exe                   
+│   └── text_input.txt           
+├── backend/                     
+│   ├── server.js                
+│   ├── compressor_cli.exe       
+│   └── package.json             
+├── frontend/                     
 │   ├── src/
 │   │   ├── components/
-│   │   │   └── Compressor.jsx   # React UI component
-│   │   └── index.css            # Tailwind CSS styles
-│   ├── tailwind.config.js       # Tailwind configuration
-│   └── package.json             # Frontend dependencies
-├── README.md                     # Technical documentation
-└── .gitignore                   # Git ignore rules
+│   │   │   └── Compressor.jsx   
+│   │   └── index.css            
+│   ├── tailwind.config.js       
+│   └── package.json             
+├── README.md                     
+└── .gitignore                   
 ```
 
 ## Web Application Features
@@ -201,18 +201,18 @@ npm run preview  # Preview production build
 ## Technical Dependencies
 
 ### Backend
-- **Node.js**: 18+ (LTS recommended)
-- **Express.js**: 4.18+ (Web framework)
-- **Multer**: 1.4+ (File upload middleware)
-- **CORS**: 2.8+ (Cross-origin resource sharing)
+- **Node.js**
+- **Express.js**
+- **Multer**
+- **CORS**
 
 ### Frontend
-- **React**: 18+ (UI framework)
-- **Vite**: 4+ (Build tool and dev server)
-- **Tailwind CSS**: 4+ (Utility-first CSS framework)
-- **Axios**: 1.4+ (HTTP client)
-- **PostCSS**: 8+ (CSS processing)
-- **Autoprefixer**: 10+ (CSS vendor prefixing)
+- **React**: 18+ 
+- **Vite**: 4+ 
+- **Tailwind CSS**: 4+ 
+- **Axios**: 1.4+ 
+- **PostCSS**: 
+- **Autoprefixer**: 10+ 
 
 ### C++ Core
 - **Compiler**: GCC 7+ or Clang 6+ or MSVC 2017+
