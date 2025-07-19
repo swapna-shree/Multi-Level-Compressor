@@ -1,0 +1,100 @@
+#include "BWT.h"
+#include "MTF.h"
+#include "RLE.h"
+#include "Huffman.h"
+#include <iostream>
+#include <string>
+#include<fstream>
+
+using namespace std;
+
+class Compressor
+{
+private:
+    int primaryIndex; 
+    HuffmanCoding huffman;
+
+public:
+    
+    string compress(const string &input)
+    {
+        cout << "\n========== Compression Pipeline ==========" << endl;
+        string bwtResult = bwtEncode(input, primaryIndex);
+        cout << "[1/4] BWT Transform        ... Done (Primary Index: " << primaryIndex << ")" << endl;
+        cout << "[2/4] Move-To-Front (MTF)  ... ";
+        string mtfResult = mtfEncode(bwtResult);
+        cout << "Done" << endl;
+        cout << "[3/4] Run-Length Encoding  ... ";
+        string rleResult = rleEncoded(mtfResult);
+        cout << "Done" << endl;
+        cout << "[4/4] Huffman Coding       ... ";
+        huffman.buildHuffmanTree(rleResult);
+        string compressedData = huffman.encode(rleResult);
+        cout << "Done" << endl;
+        cout << "==========================================" << endl;
+        cout << "[Info] Compression Primary Index: " << primaryIndex << endl;
+        cout << "==========================================\n" << endl;
+        return compressedData;
+    }
+
+    // Decompress input string using the pipeline
+    string decompress(const string &compressed, int primaryIndex)
+    {
+        cout << "\n======== Decompression Pipeline =========" << endl;
+        cout << "[Info] Using Primary Index: " << primaryIndex << endl;
+        cout << "[1/4] Huffman Decoding     ... ";
+        string rleResult = huffman.decode(compressed);
+        cout << "Done" << endl;
+        cout << "[2/4] RLE Decoding         ... ";
+        string mtfResult = rleDecoded(rleResult);
+        cout << "Done" << endl;
+        cout << "[3/4] MTF Decoding         ... ";
+        string bwtResult = mtfDecode(mtfResult);
+        cout << "Done" << endl;
+        cout << "[4/4] BWT Inverse Transform... ";
+        string originalText = bwtDecode(bwtResult, primaryIndex);
+        cout << "Done" << endl;
+        cout << "==========================================" << endl;
+        cout << "[Info] Decompression Primary Index: " << primaryIndex << endl;
+        cout << "==========================================\n" << endl;
+        return originalText;
+    }
+
+    int getPrimaryIndex() const
+    {
+        return primaryIndex;
+    }
+};
+
+// int main()
+// {
+//     Compressor compressor;
+//     string input;
+//     ifstream file("text_input.txt");
+//     if (!file)
+//     {
+//         cerr << "[Error] text_input.txt not found!" << endl;
+//         return 1;
+//     }
+//     getline(file, input, '\0');
+//     file.close();
+//     if (input.empty())
+//     {
+//         cerr << "[Error] Input file is empty!" << endl;
+//         return 1;
+//     }
+//     string compressed = compressor.compress(input);
+//     int primaryIndex = compressor.getPrimaryIndex();
+//     string decompressed = compressor.decompress(compressed, primaryIndex);
+//     cout << "\n================ Pipeline Result ================" << endl;
+//     if (decompressed == input)
+//     {
+//         cout << "[SUCCESS] Original and decompressed text match." << endl;
+//     }
+//     else
+//     {
+//         cout << "[FAILURE] Original and decompressed text do not match." << endl;
+//     }
+//     cout <<   "==================================================\n" << endl;
+//     return 0;
+// }
