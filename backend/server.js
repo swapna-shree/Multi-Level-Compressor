@@ -44,6 +44,8 @@ app.post('/compress', (req, res) => {
             const lines = output.trim().split('\n');
             const jsonLine = lines[lines.length - 1];
             const result = JSON.parse(jsonLine);
+            console.log('Compressor CLI output:', output);
+            console.log('Parsed JSON line:', jsonLine);
             res.json({
                 ...result,
                 timestamp: new Date().toISOString(),
@@ -80,11 +82,8 @@ app.post('/decompress', (req, res) => {
         if (code !== 0) {
             return res.status(500).json({ error: error || 'Decompression failed' });
         }
-        // Use only the last non-empty line as the decompressed result
-        const lines = output.trim().split('\n').filter(line => line.trim() !== '');
-        const decompressed = lines[lines.length - 1];
         res.json({ 
-            decompressed,
+            decompressed: output, // return the full output, not just the last line
             timestamp: new Date().toISOString()
         });
     });

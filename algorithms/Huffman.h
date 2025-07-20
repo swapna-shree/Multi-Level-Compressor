@@ -12,17 +12,19 @@ using namespace std;
 
 struct Node
 {
-    char ch;
+    unsigned char ch;
     int freq;
     Node *left, *right;
 
-    Node(char c, int f) : ch(c), freq(f), left(nullptr), right(nullptr) {}
+    Node(unsigned char c, int f) : ch(c), freq(f), left(nullptr), right(nullptr) {}
 };
 
 struct Compare
 {
     bool operator()(Node *a, Node *b)
     {
+        if (a->freq == b->freq)
+            return a->ch > b->ch; // break ties by character value
         return a->freq > b->freq;
     }
 };
@@ -32,9 +34,9 @@ class HuffmanCoding
 
 private:
     Node *root;
-    unordered_map<char, string> codes;
-    unordered_map<string, char> reverseCodes;
-    map<char, int> freqTable;
+    unordered_map<unsigned char, string> codes;
+    unordered_map<string, unsigned char> reverseCodes;
+    map<unsigned char, int> freqTable;
 
     void buildCodes(Node *node, string str);
     void freeTree(Node *node);
@@ -52,8 +54,8 @@ public:
     bool compressToFile(const string &inputText, const string &filename);
     bool decompressFromFile(const string &filename, string &outputText);
 
-    map<char, int> getFrequencyTable() const { return freqTable; }
-    void setFrequencyTable(const map<char, int>& table);
+    map<unsigned char, int> getFrequencyTable() const { return freqTable; }
+    void setFrequencyTable(const map<unsigned char, int>& table);
 };
 
 #endif

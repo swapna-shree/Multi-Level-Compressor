@@ -16,8 +16,8 @@ string bwtEncode(const string &input, int &primaryIndex)
          {
              for (int i = 0; i < n; ++i)
              {
-                 char ca = input[(a + i) % n];
-                 char cb = input[(b + i) % n];
+                 unsigned char ca = input[(a + i) % n];
+                 unsigned char cb = input[(b + i) % n];
                  if (ca != cb)
                      return ca < cb;
              }

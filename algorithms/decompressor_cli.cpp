@@ -49,7 +49,7 @@ int main() {
     }
     string freqStr = input.substr(freqStart, freqEnd - freqStart);
 
-    map<char, int> freqTable;
+    map<unsigned char, int> freqTable;
     stringstream ss(freqStr);
     string pair;
     while (getline(ss, pair, ',')) {
@@ -59,7 +59,7 @@ int main() {
             if (quote == string::npos || quote+1 >= pair.size()) continue;
             int key = stoi(pair.substr(quote+1, colon-quote-1));
             int value = stoi(pair.substr(colon+1));
-            freqTable[(char)key] = value;
+            freqTable[static_cast<unsigned char>(key)] = value;
         }
     }
 

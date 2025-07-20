@@ -16,6 +16,8 @@ const Compressor = () => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const fileInputRef = useRef(null);
 
+    const normalizeText = str => str.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+
     const handleCompress = async () => {
         if (!inputText.trim()) return;
 
@@ -129,6 +131,8 @@ const Compressor = () => {
             : compressionResult.compressed.substring(0, 50) + (compressionResult.compressed.length > 50 ? '...' : '')
         )
         : '';
+
+    const isMatch = normalizeText(inputText) === normalizeText(decompressed);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
@@ -249,7 +253,7 @@ const Compressor = () => {
                                             </div>
                                             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-xl p-2 text-center">
                                                 <div className="text-xs text-gray-400">Compressed</div>
-                                                <div className="text-sm font-bold">{compressionResult.compressedSize}</div>
+                                                <div className="text-sm font-bold">{compressionResult ? compressionResult.compressedSize : 0}</div>
                                             </div>
                                             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-xl p-2 text-center">
                                                 <div className="text-xs text-gray-400">Ratio</div>
@@ -316,8 +320,8 @@ const Compressor = () => {
                             {decompressed}
                         </div>
                         <div className="mt-4 text-center">
-                            <span className={`px-4 py-2 rounded-lg ${decompressed === inputText ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                                {decompressed === inputText ? 'Perfect Match!' : 'Mismatch Detected'}
+                            <span className={`px-4 py-2 rounded-lg ${isMatch ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                                {isMatch ? 'Perfect Match!' : 'Mismatch Detected'}
                             </span>
                         </div>
                     </div>

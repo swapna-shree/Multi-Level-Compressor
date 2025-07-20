@@ -13,36 +13,30 @@ void HuffmanCoding :: buildHuffmanTree(const string &text){
         cerr << "[Error] Input text is empty . \n";
         return;
     }
-
-    map<char , int> freq;
-    for(char ch : text){
+    map<unsigned char , int> freq;
+    for(unsigned char ch : text){
         freq[ch]++;
     }
-    freqTable = freq; // <-- changed to map
-
+    freqTable = freq;
     priority_queue<Node*  , vector <Node*> , Compare> pq;
     for(auto pair : freq){
         pq.push(new Node(pair.first , pair.second));
     }
-
     while(pq.size() > 1){
         Node *left = pq.top();
         pq.pop();
         Node *right = pq.top();
         pq.pop();
-
         Node *merged = new Node('\0' , left->freq + right->freq);
         merged->left = left;
         merged->right = right;
-
         pq.push(merged);
     }
-
     root = pq.top();
     buildCodes(root , "");
 }
 
-void HuffmanCoding::setFrequencyTable(const map<char, int>& table) {
+void HuffmanCoding::setFrequencyTable(const map<unsigned char, int>& table) {
     freqTable = table;
     priority_queue<Node*, vector<Node*>, Compare> pq;
     for (auto pair : freqTable) {
@@ -64,12 +58,10 @@ void HuffmanCoding::setFrequencyTable(const map<char, int>& table) {
 
 void HuffmanCoding::buildCodes(Node* node , string str){
     if(!node) return;
-
     if(!node->left && !node->right){
         codes[node->ch] = str;
         reverseCodes[str] = node->ch;
     }
-
     buildCodes(node->left , str+"0");
     buildCodes(node->right , str+"1");
 }
@@ -77,7 +69,7 @@ void HuffmanCoding::buildCodes(Node* node , string str){
 string HuffmanCoding::encode(const string &text){
     if(text.empty()) return "";
     string encoded;
-    for(char ch : text){
+    for(unsigned char ch : text){
         encoded += codes[ch];
     }
     return encoded;

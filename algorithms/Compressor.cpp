@@ -40,23 +40,23 @@ public:
     // Decompress input string using the pipeline
     string decompress(const string &compressed, int primaryIndex)
     {
-        cout << "\n======== Decompression Pipeline =========" << endl;
-        cout << "[Info] Using Primary Index: " << primaryIndex << endl;
-        cout << "[1/4] Huffman Decoding     ... ";
+        cerr << "\n======== Decompression Pipeline =========" << endl;
+        cerr << "[Info] Using Primary Index: " << primaryIndex << endl;
+        cerr << "[1/4] Huffman Decoding     ... ";
         string rleResult = huffman.decode(compressed);
-        cout << "Done" << endl;
-        cout << "[2/4] RLE Decoding         ... ";
+        cerr << "Done" << endl;
+        cerr << "[2/4] RLE Decoding         ... ";
         string mtfResult = rleDecoded(rleResult);
-        cout << "Done" << endl;
-        cout << "[3/4] MTF Decoding         ... ";
+        cerr << "Done" << endl;
+        cerr << "[3/4] MTF Decoding         ... ";
         string bwtResult = mtfDecode(mtfResult);
-        cout << "Done" << endl;
-        cout << "[4/4] BWT Inverse Transform... ";
+        cerr << "Done" << endl;
+        cerr << "[4/4] BWT Inverse Transform... ";
         string originalText = bwtDecode(bwtResult, primaryIndex);
-        cout << "Done" << endl;
-        cout << "==========================================" << endl;
-        cout << "[Info] Decompression Primary Index: " << primaryIndex << endl;
-        cout << "==========================================\n" << endl;
+        cerr << "Done" << endl;
+        cerr << "==========================================" << endl;
+        cerr << "[Info] Decompression Primary Index: " << primaryIndex << endl;
+        cerr << "==========================================\n" << endl;
         return originalText;
     }
 
