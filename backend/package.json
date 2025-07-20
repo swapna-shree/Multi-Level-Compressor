@@ -4,6 +4,7 @@
   "description": "Backend API for text compression pipeline",
   "main": "server.js",
   "scripts": {
+    "build": "build.bat",
     "start": "node server.js",
     "dev": "node server.js"
   },

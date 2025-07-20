@@ -119,19 +119,19 @@ Huffman/
 
 ## API Endpoints
 
-### POST /api/compress
+### POST /compress
 - **Input**: `{ "text": "string" }`
 - **Output**: `{ "compressed": "binary", "primaryIndex": number, "timestamp": "ISO", "originalSize": number, "compressedSize": number }`
 - **Process**: Runs `algorithms/compressor_cli.exe` with input text
 - **Performance**: Real-time compression with detailed metrics
 
-### POST /api/decompress
+### POST /decompress
 - **Input**: `{ "compressed": "binary", "primaryIndex": number }`
 - **Output**: `{ "decompressed": "string", "timestamp": "ISO" }`
 - **Process**: Runs `algorithms/decompressor_cli.exe` with compressed data
 - **Verification**: Ensures perfect reconstruction of original text
 
-### POST /api/upload
+### POST /upload
 - **Input**: Multipart form data with file
 - **Output**: Same as compress endpoint + filename
 - **Process**: Reads file content and compresses
@@ -255,31 +255,3 @@ npm run preview  # Preview production build
 - **Error handling**: Non-zero exit codes for failures
 - **Format**: UTF-8 encoded JSON strings
 
-## Error Handling & Validation
-
-### Compression Errors
-- **Empty input**: Validates non-empty text input
-- **Memory allocation**: Handles out-of-memory scenarios
-- **Invalid encoding**: UTF-8 validation for input text
-- **File I/O errors**: Graceful handling of file operations
-- **Algorithm failures**: BWT, MTF, RLE, Huffman error states
-
-### Decompression Errors
-- **Invalid primary index**: Bounds checking for reconstruction
-- **Corrupted binary data**: Huffman tree validation
-- **Missing metadata**: Algorithm parameter validation
-- **Memory allocation failures**: Resource management
-- **Reconstruction failures**: BWT inverse transform errors
-
-### API Errors
-- **HTTP 400**: Invalid input parameters or malformed JSON
-- **HTTP 413**: File too large (>10MB limit)
-- **HTTP 415**: Unsupported file type
-- **HTTP 500**: Internal server errors or C++ executable failures
-- **HTTP 503**: Service unavailable (executable not found)
-
-### Frontend Error Handling
-- **Network errors**: Axios error interceptors
-- **File validation**: Client-side file type and size checks
-- **User feedback**: Toast notifications for errors
-- **Graceful degradation**: Fallback UI states

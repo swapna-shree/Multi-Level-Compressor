@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
+#include <map>
 
 using namespace std;
 
@@ -33,6 +34,7 @@ private:
     Node *root;
     unordered_map<char, string> codes;
     unordered_map<string, char> reverseCodes;
+    map<char, int> freqTable;
 
     void buildCodes(Node *node, string str);
     void freeTree(Node *node);
@@ -49,6 +51,9 @@ public:
 
     bool compressToFile(const string &inputText, const string &filename);
     bool decompressFromFile(const string &filename, string &outputText);
+
+    map<char, int> getFrequencyTable() const { return freqTable; }
+    void setFrequencyTable(const map<char, int>& table);
 };
 
 #endif

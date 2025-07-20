@@ -5,9 +5,8 @@ const Compressor = () => {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
     const [inputText, setInputText] = useState('');
-    const [compressed, setCompressed] = useState('');
+    const [compressionResult, setCompressionResult] = useState(null); // Store full JSON
     const [decompressed, setDecompressed] = useState('');
-    const [primaryIndex, setPrimaryIndex] = useState(null);
     const [loading, setLoading] = useState(false);
     const [decompressing, setDecompressing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -22,17 +21,15 @@ const Compressor = () => {
 
         const startTime = performance.now();
         setLoading(true);
-        setCompressed('');
+        setCompressionResult(null);
         setDecompressed('');
-        setPrimaryIndex(null);
         setIsExpanded(false);
 
         try {
-            const res = await axios.post(`${API_BASE_URL}/api/compress`, { text: inputText });
+            const res = await axios.post(`${API_BASE_URL}/compress`, { text: inputText });
             const endTime = performance.now();
 
-            setCompressed(res.data.compressed);
-            setPrimaryIndex(res.data.primaryIndex);
+            setCompressionResult(res.data);
             setCompressionTime(endTime - startTime);
 
             // Add to history
@@ -55,16 +52,13 @@ const Compressor = () => {
     };
 
     const handleDecompress = async () => {
-        if (!compressed || primaryIndex === null) return;
+        if (!compressionResult) return;
 
         setDecompressing(true);
         setDecompressed('');
 
         try {
-            const res = await axios.post(`${API_BASE_URL}/api/decompress`, {
-                compressed,
-                primaryIndex
-            });
+            const res = await axios.post(`${API_BASE_URL}/decompress`, compressionResult);
             setDecompressed(res.data.decompressed);
         } catch (err) {
             alert('Decompression failed: ' + (err.response?.data?.error || err.message));
@@ -86,13 +80,13 @@ const Compressor = () => {
             : 'http://localhost:5000';
 
         try {
-            const res = await axios.post(`${API_BASE_URL}/api/upload`, formData, {
+            const res = await axios.post(`${API_BASE_URL}/upload`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
             setInputText(res.data.decompressed || 'File content loaded');
-            setCompressed(res.data.compressed);
-            setPrimaryIndex(res.data.primaryIndex);
+            setCompressionResult(res.data); // Store full result for decompression
+            setDecompressed(res.data.decompressed);
             setUploadedFile({
                 name: file.name,
                 size: file.size,
@@ -107,13 +101,13 @@ const Compressor = () => {
     };
 
     const exportResults = () => {
-        if (!compressed) return;
+        if (!compressionResult) return;
 
         const data = {
-            compressed: compressed,
-            primaryIndex: primaryIndex,
+            compressed: compressionResult.compressed,
+            primaryIndex: compressionResult.primaryIndex,
             originalSize: inputText.length,
-            compressedSize: compressed.length,
+            compressedSize: compressionResult.compressedSize,
             timestamp: new Date().toISOString()
         };
 
@@ -126,10 +120,10 @@ const Compressor = () => {
         URL.revokeObjectURL(url);
     };
 
-    const compressionRatio = inputText && compressed ?
-        ((inputText.length - compressed.length) / inputText.length * 100).toFixed(1) : 0;
+    const compressionRatio = inputText && compressionResult ?
+        ((inputText.length - compressionResult.compressedSize) / inputText.length * 100).toFixed(1) : 0;
 
-    const displayCompressed = isExpanded ? compressed : compressed.substring(0, 50) + (compressed.length > 50 ? '...' : '');
+    const displayCompressed = isExpanded ? compressionResult.compressed : compressionResult.compressed.substring(0, 50) + (compressionResult.compressed.length > 50 ? '...' : '');
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
@@ -185,8 +179,8 @@ const Compressor = () => {
                                             onClick={() => {
                                                 setUploadedFile(null);
                                                 setInputText('');
-                                                setCompressed('');
-                                                setPrimaryIndex(null);
+                                                setCompressionResult(null);
+                                                setDecompressed('');
                                                 if (fileInputRef.current) fileInputRef.current.value = '';
                                             }}
                                             className="text-red-400 hover:text-red-300 text-sm"
@@ -218,7 +212,7 @@ const Compressor = () => {
                     <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-8 h-[700px] flex flex-col">
                         <h2 className="text-2xl font-bold text-center mb-6 text-green-300">Compressed Output</h2>
 
-                        {compressed ? (
+                        {compressionResult ? (
                             <div className="flex-1 flex flex-col min-h-0">
                                 {/* Scrollable Output Container - Takes most of the space */}
                                 <div className="flex-1 bg-black/40 border border-green-400/30 rounded-xl p-4 text-green-300 font-mono text-sm overflow-y-auto overflow-x-hidden min-h-0 max-h-96">
@@ -239,7 +233,7 @@ const Compressor = () => {
                                     {/* Results Section */}
                                     <div className="space-y-3">
                                         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-2 text-center">
-                                            <span className="text-yellow-300 font-semibold text-sm">Primary Index: {primaryIndex}</span>
+                                            <span className="text-yellow-300 font-semibold text-sm">Primary Index: {compressionResult.primaryIndex}</span>
                                         </div>
 
                                         {/* Stats Grid */}
@@ -250,7 +244,7 @@ const Compressor = () => {
                                             </div>
                                             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-xl p-2 text-center">
                                                 <div className="text-xs text-gray-400">Compressed</div>
-                                                <div className="text-sm font-bold">{compressed.length}</div>
+                                                <div className="text-sm font-bold">{compressionResult.compressedSize}</div>
                                             </div>
                                             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-xl p-2 text-center">
                                                 <div className="text-xs text-gray-400">Ratio</div>
@@ -286,7 +280,7 @@ const Compressor = () => {
                                         <div className="flex gap-3">
                                             <button
                                                 onClick={handleDecompress}
-                                                disabled={decompressing || !compressed}
+                                                disabled={decompressing || !compressionResult}
                                                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-medium py-2 px-4 rounded-lg transition-all duration-200 flex-1 disabled:opacity-50"
                                             >
                                                 {decompressing ? 'Decompressing...' : 'Decompress'}
@@ -332,8 +326,8 @@ const Compressor = () => {
                             {compressionHistory.map((entry) => (
                                 <div key={entry.id} className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl p-4 hover:bg-white/5 transition-colors cursor-pointer" onClick={() => {
                                     setInputText(entry.original);
-                                    setCompressed(entry.compressed);
-                                    setPrimaryIndex(entry.primaryIndex);
+                                    setCompressionResult(entry); // Set full result for decompression
+                                    setDecompressed(entry.decompressed);
                                 }}>
                                     <div className="text-sm text-gray-400 mb-2">
                                         {new Date(entry.timestamp).toLocaleString()}

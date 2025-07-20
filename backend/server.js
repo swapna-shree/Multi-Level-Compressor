@@ -10,12 +10,17 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Test endpoint
+app.get('/test', (req, res) => {
+    res.json({ message: 'API is working!', endpoints: ['POST /compress', 'POST /decompress', 'POST /upload'] });
+});
+
 // File upload configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Compression endpoint
-app.post('/api/compress', (req, res) => {
+app.post('/compress', (req, res) => {
     const { text } = req.body;
     if (!text) return res.status(400).json({ error: 'No text provided' });
 
@@ -52,7 +57,7 @@ app.post('/api/compress', (req, res) => {
 });
 
 // Decompression endpoint
-app.post('/api/decompress', (req, res) => {
+app.post('/decompress', (req, res) => {
     const { compressed, primaryIndex } = req.body;
     if (!compressed || primaryIndex === undefined) {
         return res.status(400).json({ error: 'Missing compressed data or primary index' });
@@ -64,7 +69,8 @@ app.post('/api/decompress', (req, res) => {
     let output = '';
     let error = '';
 
-    decompressor.stdin.write(JSON.stringify({ compressed, primaryIndex }));
+    // Instead of only compressed and primaryIndex, pass the full body (including freqTable)
+    decompressor.stdin.write(JSON.stringify(req.body));
     decompressor.stdin.end();
 
     decompressor.stdout.on('data', (data) => { output += data.toString(); });
@@ -74,15 +80,18 @@ app.post('/api/decompress', (req, res) => {
         if (code !== 0) {
             return res.status(500).json({ error: error || 'Decompression failed' });
         }
+        // Use only the last non-empty line as the decompressed result
+        const lines = output.trim().split('\n').filter(line => line.trim() !== '');
+        const decompressed = lines[lines.length - 1];
         res.json({ 
-            decompressed: output.trim(),
+            decompressed,
             timestamp: new Date().toISOString()
         });
     });
 });
 
 // File upload endpoint
-app.post('/api/upload', upload.single('file'), (req, res) => {
+app.post('/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }

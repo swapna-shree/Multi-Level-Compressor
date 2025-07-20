@@ -9,6 +9,10 @@ dist/
 build/
 *.exe
 
+# Allow specific executables needed for backend
+!backend/compressor_cli.exe
+!backend/decompressor_cli.exe
+
 # Environment variables
 .env
 .env.local

@@ -64,37 +64,8 @@ public:
     {
         return primaryIndex;
     }
+
+    HuffmanCoding& getHuffman() { return huffman; }
+    void setHuffman(const HuffmanCoding& h) { huffman = h; }
 };
 
-// int main()
-// {
-//     Compressor compressor;
-//     string input;
-//     ifstream file("text_input.txt");
-//     if (!file)
-//     {
-//         cerr << "[Error] text_input.txt not found!" << endl;
-//         return 1;
-//     }
-//     getline(file, input, '\0');
-//     file.close();
-//     if (input.empty())
-//     {
-//         cerr << "[Error] Input file is empty!" << endl;
-//         return 1;
-//     }
-//     string compressed = compressor.compress(input);
-//     int primaryIndex = compressor.getPrimaryIndex();
-//     string decompressed = compressor.decompress(compressed, primaryIndex);
-//     cout << "\n================ Pipeline Result ================" << endl;
-//     if (decompressed == input)
-//     {
-//         cout << "[SUCCESS] Original and decompressed text match." << endl;
-//     }
-//     else
-//     {
-//         cout << "[FAILURE] Original and decompressed text do not match." << endl;
-//     }
-//     cout <<   "==================================================\n" << endl;
-//     return 0;
-// }
