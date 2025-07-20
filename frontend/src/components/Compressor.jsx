@@ -123,7 +123,12 @@ const Compressor = () => {
     const compressionRatio = inputText && compressionResult ?
         ((inputText.length - compressionResult.compressedSize) / inputText.length * 100).toFixed(1) : 0;
 
-    const displayCompressed = isExpanded ? compressionResult.compressed : compressionResult.compressed.substring(0, 50) + (compressionResult.compressed.length > 50 ? '...' : '');
+    const displayCompressed = compressionResult
+        ? (isExpanded
+            ? compressionResult.compressed
+            : compressionResult.compressed.substring(0, 50) + (compressionResult.compressed.length > 50 ? '...' : '')
+        )
+        : '';
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">

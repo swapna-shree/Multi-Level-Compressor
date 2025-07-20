@@ -4,4 +4,4 @@ function App() {
   return <Compressor />;
 }
 
-export default App; 
+export default App;
